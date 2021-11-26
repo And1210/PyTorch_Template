@@ -4,10 +4,10 @@ import torch.nn.functional as F
 from models.base_model import BaseModel
 
 #PyTorch defined model
-class FER2013(nn.Module):
+class TEMPLATE(nn.Module):
     """basenet for fer2013"""
     def __init__(self, in_channels=1, num_classes=7):
-        super(FER2013, self).__init__()
+        super(TEMPLATE, self).__init__()
         norm_layer = nn.BatchNorm2d
 
         #Here is where you define your architecture (by defining layers)
@@ -48,14 +48,14 @@ class FER2013(nn.Module):
         return x
 
 #The abstract model class, uses above defined class and is used in the train script
-class FER2013model(BaseModel):
+class TEMPLATEmodel(BaseModel):
     """basenet for fer2013"""
 
     def __init__(self, configuration, in_channels=1, num_classes=7):
         super().__init__(configuration)
 
         #Initialize model defined above
-        self.model = FER2013(in_channels, num_classes)
+        self.model = TEMPLATE(in_channels, num_classes)
         self.model.cuda()
 
         #Define loss function
@@ -93,7 +93,7 @@ class FER2013model(BaseModel):
 
 
 if __name__ == "__main__":
-    net = FER2013model().cuda()
+    net = TEMPLATEmodel().cuda()
     from torchsummary import summary
 
     print(summary(net, input_size=(1, 48, 48)))
