@@ -74,6 +74,10 @@ class TEMPLATEmodel(BaseModel):
         self.loss_names = ['total']
         self.network_names = ['model']
 
+        self.val_images = []
+        self.val_predictions = []
+        self.val_labels = []
+
     #Calls the models forwards function 
     def forward(self):
         x = self.input
@@ -90,6 +94,43 @@ class TEMPLATEmodel(BaseModel):
         self.optimizer.step()
         self.optimizer.zero_grad()
         torch.cuda.empty_cache()
+
+    #Test function for the model
+    def test(self):
+        super().test() # run the forward pass
+
+        # save predictions and labels as flat tensors
+        self.val_images.append(self.input)
+        self.val_predictions.append(self.output)
+        self.val_labels.append(self.label)
+
+    #Should be run after each epoch, outputs accuracy
+    def post_epoch_callback(self, epoch, visualizer):
+        self.val_predictions = torch.cat(self.val_predictions, dim=0)
+        predictions = torch.argmax(self.val_predictions, dim=1)
+        predictions = torch.flatten(predictions).cpu()
+
+        self.val_labels = torch.cat(self.val_labels, dim=0)
+        labels = torch.flatten(self.val_labels).cpu()
+
+        self.val_images = torch.squeeze(torch.cat(self.val_images, dim=0)).cpu()
+
+        # Calculate and show accuracy
+        val_accuracy = accuracy_score(labels, predictions)
+
+        metrics = OrderedDict()
+        metrics['Accuracy'] = val_accuracy
+
+        if (visualizer != None):
+            visualizer.plot_current_validation_metrics(epoch, metrics)
+        print('Validation accuracy: {0:.3f}'.format(val_accuracy))
+
+        # Here you may do something else with the validation data such as
+        # displaying the validation images or calculating the ROC curve
+
+        self.val_images = []
+        self.val_predictions = []
+        self.val_labels = []
 
 
 if __name__ == "__main__":
