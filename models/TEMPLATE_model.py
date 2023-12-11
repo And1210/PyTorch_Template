@@ -2,6 +2,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from models.base_model import BaseModel
+from sklearn.metrics import accuracy_score
+from collections import OrderedDict
 
 #PyTorch defined model
 class TEMPLATE(nn.Module):
