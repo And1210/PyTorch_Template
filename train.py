@@ -47,6 +47,8 @@ def train(config_file, export=True):
         train_iterations = len(train_dataset)
         train_batch_size = configuration['train_dataset_params']['loader_params']['batch_size']
 
+        total_loss = 0
+        
         model.train()
         #On every epoch, loop through all data in train_dataset
         for i, data in enumerate(train_dataset):  # inner loop within one epoch
